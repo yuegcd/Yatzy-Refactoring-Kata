@@ -1,10 +1,16 @@
 package org.codingdojo.yatzy1;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class Yatzy1 {
 
-    private final int[] dice;
+    private final List<Integer> dice;
+    private final Map<Integer, Integer> dieToCount;
+
     public Yatzy1(int d1, int d2, int d3, int d4, int d5) {
-        dice = new int[] {d1, d2, d3, d4, d5};
+        dice = List.of(d1, d2, d3, d4, d5);
+        dieToCount = counts();
     }
 
     public int chance() {
@@ -12,12 +18,8 @@ public class Yatzy1 {
     }
 
     public int yatzy() {
-        int[] counts = new int[6];
-        for (int die : dice)
-            counts[die-1]++;
-        for (int i = 0; i != 6; i++)
-            if (counts[i] == 5)
-                return 50;
+        boolean isYatzy = dieToCount.containsValue(5);
+        if (isYatzy) return 50;
         return 0;
     }
 
@@ -25,7 +27,7 @@ public class Yatzy1 {
         return numbers(1);
     }
 
-    public int twos(){
+    public int twos() {
         return numbers(2);
     }
 
@@ -45,72 +47,43 @@ public class Yatzy1 {
         return numbers(6);
     }
 
-    public int onePair()
-    {
-        int[] counts = counts();
-        int at;
-        for (at = 0; at != 6; at++)
-            if (counts[6-at-1] >= 2)
-                return (6-at)*2;
+    public int onePair() {
+        Set<Integer> onePairDice = diceOfAKind(2);
+        Optional<Integer> largestPair = onePairDice.stream().max(Integer::compareTo);
+        return largestPair.map(dieValue -> dieValue * 2).orElse(0);
+    }
+
+    public int twoPairs() {
+        Set<Integer> onePairDice = diceOfAKind(2);
+        boolean isTwoParis = onePairDice.size() == 2;
+        if (isTwoParis) return sumOf(onePairDice, 2);
         return 0;
     }
 
-    public int twoPairs()
-    {
-        int[] counts = counts();
-        int n = 0;
-        int score = 0;
-        for (int i = 0; i < 6; i += 1)
-            if (counts[6-i-1] >= 2) {
-                n++;
-                score += (6-i);
-            }
-        if (n == 2)
-            return score * 2;
-        else
-            return 0;
+    public int threeOfAKind() {
+        Set<Integer> threeOfAKindDice = diceOfAKind(3);
+        if (threeOfAKindDice.isEmpty()) return 0;
+        return sumOf(threeOfAKindDice, 3);
     }
 
-    public int threeOfAKind()
-    {
-        int[] counts = counts();
-        for (int i = 0; i < 6; i++)
-            if (counts[i] >= 3)
-                return (i+1) * 3;
+    public int fourOfAKind() {
+        Set<Integer> fourOfAKindDice = diceOfAKind(4);
+        if (fourOfAKindDice.isEmpty()) return 0;
+        return sumOf(fourOfAKindDice, 4);
+    }
+
+
+    public int smallStraight() {
+        List<Integer> smallStraight = List.of(1, 2, 3, 4, 5);
+        boolean isSmallStraight = new HashSet<>(dice).containsAll(smallStraight);
+        if (isSmallStraight) return 15;
         return 0;
     }
 
-    public int fourOfAKind()
-    {
-        int[] counts = counts();
-        for (int i = 0; i < 6; i++)
-            if (counts[i] >= 4)
-                return (i+1) * 4;
-        return 0;
-    }
-
-
-    public int smallStraight()
-    {
-        int[] counts = counts();
-        if (counts[0] == 1 &&
-            counts[1] == 1 &&
-            counts[2] == 1 &&
-            counts[3] == 1 &&
-            counts[4] == 1)
-            return 15;
-        return 0;
-    }
-
-    public int largeStraight()
-    {
-        int[] counts = counts();
-        if (counts[1] == 1 &&
-            counts[2] == 1 &&
-            counts[3] == 1 &&
-            counts[4] == 1
-            && counts[5] == 1)
-            return 20;
+    public int largeStraight() {
+        List<Integer> largeStraight = List.of(2, 3, 4, 5, 6);
+        boolean isLargeStraight = new HashSet<>(dice).containsAll(largeStraight);
+        if (isLargeStraight) return 20;
         return 0;
     }
 
@@ -121,26 +94,40 @@ public class Yatzy1 {
     }
 
     private int sumAll() {
-        int total = 0;
-        for (int i : dice) {
-            total += i;
-        }
-        return total;
+        return dice.stream()
+            .mapToInt(Integer::intValue)
+            .sum();
     }
 
-    private int[] counts() {
-        int[] counts = new int[6];
-        for(int die: dice) {
-            counts[die-1]++;
+    private int sumOf(Set<Integer> diceByNumber, int numberOfDice) {
+        return diceByNumber.stream().mapToInt(Integer::intValue).sum() * numberOfDice;
+    }
+
+    private Set<Integer> diceOfAKind(int numberOfDiceWithSameValue) {
+        return dieToCount.entrySet().stream()
+            .filter(entry -> entry.getValue() >= numberOfDiceWithSameValue)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+    }
+
+    private Map<Integer, Integer> counts() {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 1; i <= 6; i++) {
+            map.put(i, 0);
         }
-        return counts;
+        for (int die : dice) {
+            map.put(die, map.get(die) + 1);
+        }
+        return map;
     }
 
     private int numbers(int n) {
         int sum = 0;
-        for (int die : dice)
-            if (die == n)
+        for (int die : dice) {
+            if (die == n) {
                 sum = sum + n;
+            }
+        }
         return sum;
     }
 }

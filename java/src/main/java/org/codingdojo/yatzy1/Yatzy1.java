@@ -2,21 +2,12 @@ package org.codingdojo.yatzy1;
 
 public class Yatzy1 {
 
-    protected int[] dice;
-    public Yatzy1() {}
-    public Yatzy1(int d1, int d2, int d3, int d4, int d5)
-    {
-        this();
-        dice = new int[5];
-        dice[0] = d1;
-        dice[1] = d2;
-        dice[2] = d3;
-        dice[3] = d4;
-        dice[4] = d5;
+    private final int[] dice;
+    public Yatzy1(int d1, int d2, int d3, int d4, int d5) {
+        dice = new int[] {d1, d2, d3, d4, d5};
     }
 
-    public int chance()
-    {
+    public int chance() {
         int total = 0;
         for (int i : dice) {
             total += i;
@@ -24,8 +15,7 @@ public class Yatzy1 {
         return total;
     }
 
-    public int yatzy()
-    {
+    public int yatzy() {
         int[] counts = new int[6];
         for (int die : dice)
             counts[die-1]++;
@@ -36,67 +26,27 @@ public class Yatzy1 {
     }
 
     public int ones() {
-        int sum;
-        sum = 0;
-        for (int at = 0; at != 5; at++) {
-            if (dice[at] == 1) {
-                sum += 1;
-            }
-        }
-        return sum;
+        return numbers(1);
     }
 
     public int twos(){
-        int sum;
-        sum = 0;
-        for (int at = 0; at != 5; at++) {
-            if (dice[at] == 2) {
-                sum += 2;
-            }
-        }
-        return sum;
+        return numbers(2);
     }
 
     public int threes() {
-        int sum;
-        sum = 0;
-        for (int at = 0; at != 5; at++) {
-            if (dice[at] == 3) {
-                sum += 3;
-            }
-        }
-        return sum;
+        return numbers(3);
     }
 
-    public int fours()
-    {
-        int sum;    
-        sum = 0;
-        for (int at = 0; at != 5; at++) {
-            if (dice[at] == 4) {
-                sum += 4;
-            }
-        }
-        return sum;
+    public int fours() {
+        return numbers(4);
     }
 
-    public int fives()
-    {
-        int s = 0;
-        int i;
-        for (i = 0; i < dice.length; i++) 
-            if (dice[i] == 5)
-                s = s + 5;
-        return s;
+    public int fives() {
+        return numbers(5);
     }
 
-    public int sixes()
-    {
-        int sum = 0;
-        for (int at = 0; at < dice.length; at++) 
-            if (dice[at] == 6)
-                sum = sum + 6;
-        return sum;
+    public int sixes() {
+        return numbers(6);
     }
 
     public int onePair()
@@ -118,7 +68,7 @@ public class Yatzy1 {
             if (counts[6-i-1] >= 2) {
                 n++;
                 score += (6-i);
-            }        
+            }
         if (n == 2)
             return score * 2;
         else
@@ -202,6 +152,14 @@ public class Yatzy1 {
             counts[die-1]++;
         }
         return counts;
+    }
+
+    private int numbers(int n) {
+        int sum = 0;
+        for (int die : dice)
+            if (die == n)
+                sum = sum + n;
+        return sum;
     }
 }
 

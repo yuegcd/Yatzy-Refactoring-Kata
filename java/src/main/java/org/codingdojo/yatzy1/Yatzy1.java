@@ -8,11 +8,7 @@ public class Yatzy1 {
     }
 
     public int chance() {
-        int total = 0;
-        for (int i : dice) {
-            total += i;
-        }
-        return total;
+        return sumAll();
     }
 
     public int yatzy() {
@@ -118,32 +114,18 @@ public class Yatzy1 {
         return 0;
     }
 
-    public int fullHouse()
-    {
-        boolean _2 = false;
-        int i;
-        int _2_at = 0;
-        boolean _3 = false;
-        int _3_at = 0;
+    public int fullHouse() {
+        boolean isFullHouse = threeOfAKind() != 0 && onePair() != 0;
+        if (isFullHouse) return sumAll();
+        return 0;
+    }
 
-        int[] counts = counts();
-
-        for (i = 0; i != 6; i += 1)
-            if (counts[i] == 2) {
-                _2 = true;
-                _2_at = i+1;
-            }
-
-        for (i = 0; i != 6; i += 1)
-            if (counts[i] == 3) {
-                _3 = true;
-                _3_at = i+1;
-            }
-
-        if (_2 && _3)
-            return _2_at * 2 + _3_at * 3;
-        else
-            return 0;
+    private int sumAll() {
+        int total = 0;
+        for (int i : dice) {
+            total += i;
+        }
+        return total;
     }
 
     private int[] counts() {

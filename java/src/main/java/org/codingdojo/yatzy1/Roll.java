@@ -2,6 +2,7 @@ package org.codingdojo.yatzy1;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public record Roll(List<Integer> dice) {
     public int sumAll() {
@@ -10,14 +11,10 @@ public record Roll(List<Integer> dice) {
             .sum();
     }
 
-    public int numbers(int n) {
-        int sum = 0;
-        for (int die : dice) {
-            if (die == n) {
-                sum = sum + n;
-            }
-        }
-        return sum;
+    public IntStream filterByValue(int dieValue) {
+        return dice.stream()
+            .filter(die -> die.equals(dieValue))
+            .mapToInt(Integer::intValue);
     }
 
     public Map<Integer, Integer> counts() {

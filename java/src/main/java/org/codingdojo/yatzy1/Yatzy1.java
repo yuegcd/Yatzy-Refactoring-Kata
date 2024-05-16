@@ -1,6 +1,7 @@
 package org.codingdojo.yatzy1;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Yatzy1 {
 
@@ -21,27 +22,27 @@ public class Yatzy1 {
     }
 
     public int ones() {
-        return roll.numbers(1);
+        return roll.filterByValue(1).sum();
     }
 
     public int twos() {
-        return roll.numbers(2);
+        return roll.filterByValue(2).sum();
     }
 
     public int threes() {
-        return roll.numbers(3);
+        return roll.filterByValue(3).sum();
     }
 
     public int fours() {
-        return roll.numbers(4);
+        return roll.filterByValue(4).sum();
     }
 
     public int fives() {
-        return roll.numbers(5);
+        return roll.filterByValue(5).sum();
     }
 
     public int sixes() {
-        return roll.numbers(6);
+        return roll.filterByValue(6).sum();
     }
 
     public int onePair() {
@@ -90,7 +91,8 @@ public class Yatzy1 {
     }
 
     private int sumOf(Set<Integer> diceByNumber, int numberOfDice) {
-        return diceByNumber.stream().mapToInt(Integer::intValue).sum() * numberOfDice;
+        Stream<Integer> stream = diceByNumber.stream();
+        return stream.mapToInt(Integer::intValue).sum() * numberOfDice;
     }
 }
 

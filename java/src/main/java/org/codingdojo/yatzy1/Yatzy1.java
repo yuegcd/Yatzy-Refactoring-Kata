@@ -16,8 +16,8 @@ public class Yatzy1 {
     }
 
     public int yatzy() {
-        List<Integer> dieCountBy5 = roll.filterByCount(count -> count == 5);
-        boolean isYatzy = !dieCountBy5.isEmpty();
+        var dieCountBy5 = roll.filterByCount(count -> count == 5);
+        var isYatzy = !dieCountBy5.isEmpty();
         if (isYatzy) return 50;
         return 0;
     }
@@ -47,45 +47,45 @@ public class Yatzy1 {
     }
 
     public int onePair() {
-        List<Integer> dice = roll.filterByCount(count -> count >= 2);
-        if(dice.isEmpty()) return 0;
+        var dice = roll.filterByCount(count -> count >= 2);
+        if (dice.isEmpty()) return 0;
         return Collections.max(dice) * 2;
     }
 
     public int twoPairs() {
-        List<Integer> dice = roll.filterByCount(count -> count >= 2);
-        if(dice.size() == 2) return dice.stream().mapToInt(Integer::intValue).sum() * 2;
+        var dice = roll.filterByCount(count -> count >= 2);
+        if (dice.size() == 2) return dice.stream().mapToInt(Integer::intValue).sum() * 2;
         return 0;
     }
 
     public int threeOfAKind() {
-        List<Integer> dice = roll.filterByCount(count -> count >= 3);
-        if(!dice.isEmpty()) return dice.get(0) * 3;
+        var dice = roll.filterByCount(count -> count >= 3);
+        if (!dice.isEmpty()) return dice.get(0) * 3;
         return 0;
     }
 
     public int fourOfAKind() {
-        List<Integer> dice = roll.filterByCount(count -> count >= 4);
-        if(!dice.isEmpty()) return dice.get(0) * 4;
+        var dice = roll.filterByCount(count -> count >= 4);
+        if (!dice.isEmpty()) return dice.get(0) * 4;
         return 0;
     }
 
     public int smallStraight() {
-        Roll smallStraight = new Roll(List.of(1, 2, 3, 4, 5));
-        boolean isSmallStraight = smallStraight.equals(roll);
+        var smallStraight = new Roll(List.of(1, 2, 3, 4, 5));
+        var isSmallStraight = smallStraight.equals(roll);
         if (isSmallStraight) return 15;
         return 0;
     }
 
     public int largeStraight() {
-        Roll largeStraight = new Roll(List.of(2, 3, 4, 5, 6));
-        boolean isLargeStraight = largeStraight.equals(roll);
+        var largeStraight = new Roll(List.of(2, 3, 4, 5, 6));
+        var isLargeStraight = largeStraight.equals(roll);
         if (isLargeStraight) return 20;
         return 0;
     }
 
     public int fullHouse() {
-        boolean isFullHouse = threeOfAKind() != 0 && onePair() != 0;
+        var isFullHouse = threeOfAKind() != 0 && onePair() != 0;
         if (isFullHouse) return roll.sumAll();
         return 0;
     }

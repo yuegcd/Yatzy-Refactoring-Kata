@@ -41,7 +41,7 @@ public record Roll(List<Integer> dice) {
     counting fixed-range, small-sized elements like dice rolls.
     */
     private int[] counts() {
-        int[] counts = new int[6];
+        var counts = new int[6];
         for (int die : dice) {
             counts[die - 1]++;
         }

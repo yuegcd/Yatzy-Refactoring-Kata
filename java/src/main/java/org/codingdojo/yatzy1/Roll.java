@@ -1,7 +1,7 @@
 package org.codingdojo.yatzy1;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
 public record Roll(List<Integer> dice) {
@@ -17,22 +17,35 @@ public record Roll(List<Integer> dice) {
             .mapToInt(Integer::intValue);
     }
 
-    public Map<Integer, Integer> counts() {
-        Map<Integer, Integer> map = new HashMap<>();
-        for (int i = 1; i <= 6; i++) {
-            map.put(i, 0);
+    public List<Integer> filterByCount(IntPredicate countPredicate) {
+        var counts = counts();
+        var result = new ArrayList<Integer>();
+        for (int i = 0; i < counts.length; i++) {
+            int dieValue = i + 1;
+            if(countPredicate.test(counts[i])) result.add(dieValue);
         }
-        for (int die : dice) {
-            map.put(die, map.get(die) + 1);
-        }
-        return map;
+        return result;
     }
 
-    public Set<Integer> diceOfAKind(int numberOfDiceWithSameValue) {
-        return counts().entrySet().stream()
-            .filter(entry -> entry.getValue() >= numberOfDiceWithSameValue)
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toSet());
+    /*
+    In terms of complexity, both map and array are equivalent,
+    with O(n) time complexity and O(1) space complexity for the additional structures they use.
+    However, the array-based approach (int[]) is likely to be more efficient in practice for several reasons:
+        - Performance:
+          Array access and updates are generally faster than HashMap operations
+          because arrays have lower overhead and better cache locality.
+        - Simplicity:
+          The array approach is simpler and more straightforward,
+          avoiding the need for boxing/unboxing of integers.
+    Therefore, while both methods are efficient, the array-based method is typically preferable for
+    counting fixed-range, small-sized elements like dice rolls.
+    */
+    private int[] counts() {
+        int[] counts = new int[6];
+        for (int die : dice) {
+            counts[die - 1]++;
+        }
+        return counts;
     }
 
     @Override

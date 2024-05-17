@@ -1,7 +1,7 @@
 package org.codingdojo.yatzy1;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.Collections;
+import java.util.List;
 
 public class Yatzy1 {
 
@@ -16,7 +16,8 @@ public class Yatzy1 {
     }
 
     public int yatzy() {
-        boolean isYatzy = roll.counts().containsValue(5);
+        List<Integer> dieCountBy5 = roll.filterByCount(count -> count == 5);
+        boolean isYatzy = !dieCountBy5.isEmpty();
         if (isYatzy) return 50;
         return 0;
     }
@@ -46,28 +47,27 @@ public class Yatzy1 {
     }
 
     public int onePair() {
-        Set<Integer> onePairDice = roll.diceOfAKind(2);
-        Optional<Integer> largestPair = onePairDice.stream().max(Integer::compareTo);
-        return largestPair.map(dieValue -> dieValue * 2).orElse(0);
+        List<Integer> dice = roll.filterByCount(count -> count >= 2);
+        if(dice.isEmpty()) return 0;
+        return Collections.max(dice) * 2;
     }
 
     public int twoPairs() {
-        Set<Integer> onePairDice = roll.diceOfAKind(2);
-        boolean isTwoParis = onePairDice.size() == 2;
-        if (isTwoParis) return sumOf(onePairDice, 2);
+        List<Integer> dice = roll.filterByCount(count -> count >= 2);
+        if(dice.size() == 2) return dice.stream().mapToInt(Integer::intValue).sum() * 2;
         return 0;
     }
 
     public int threeOfAKind() {
-        Set<Integer> threeOfAKindDice = roll.diceOfAKind(3);
-        if (threeOfAKindDice.isEmpty()) return 0;
-        return sumOf(threeOfAKindDice, 3);
+        List<Integer> dice = roll.filterByCount(count -> count >= 3);
+        if(!dice.isEmpty()) return dice.get(0) * 3;
+        return 0;
     }
 
     public int fourOfAKind() {
-        Set<Integer> fourOfAKindDice = roll.diceOfAKind(4);
-        if (fourOfAKindDice.isEmpty()) return 0;
-        return sumOf(fourOfAKindDice, 4);
+        List<Integer> dice = roll.filterByCount(count -> count >= 4);
+        if(!dice.isEmpty()) return dice.get(0) * 4;
+        return 0;
     }
 
     public int smallStraight() {
@@ -88,11 +88,6 @@ public class Yatzy1 {
         boolean isFullHouse = threeOfAKind() != 0 && onePair() != 0;
         if (isFullHouse) return roll.sumAll();
         return 0;
-    }
-
-    private int sumOf(Set<Integer> diceByNumber, int numberOfDice) {
-        Stream<Integer> stream = diceByNumber.stream();
-        return stream.mapToInt(Integer::intValue).sum() * numberOfDice;
     }
 }
 
